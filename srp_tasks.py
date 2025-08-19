@@ -39,11 +39,12 @@ class FileTaskStorage(TaskStorage):
        print(f"Tasks saved to {self.filename}")
 
 class Task:
-   def __init__(self, task_id, description, due_date=None, completed=False):
+   def __init__(self, task_id, description, due_date=None, completed=False, priority='low'):
        self.id = task_id
        self.description = description
        self.due_date = due_date
        self.completed = completed
+       self.priority = priority
 
    def mark_completed(self):
        self.completed = True
@@ -52,7 +53,7 @@ class Task:
    def __str__(self):
        status = "✓" if self.completed else " "
        due = f" (Due: {self.due_date})" if self.due_date else ""
-       return f"[{status}] {self.id}. {self.description}{due}"
+       return f"[{status}] {self.id}. {self.description}{due} Priority: {self.priority}"
 
 class TaskManager:
    def __init__(self, storage: TaskStorage): # รับ storage object เข้ามา
@@ -61,8 +62,8 @@ class TaskManager:
        self.next_id = max([t.id for t in self.tasks] + [0]) + 1 if self.tasks else 1
        print(f"Loaded {len(self.tasks)} tasks. Next ID: {self.next_id}")
 
-   def add_task(self, description, due_date=None):
-       task = Task(self.next_id, description, due_date)
+   def add_task(self, description, due_date=None, priority='low'):
+       task = Task(self.next_id, description, due_date, priority=priority)
        self.tasks.append(task)
        self.next_id += 1
        self.storage.save_tasks(self.tasks) # Save after adding
